@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'category_id',
         'brand_id',
@@ -20,16 +23,13 @@ class Product extends Model
         'is_published',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'price' => 'decimal:2',
-            'stock' => 'integer',
-            'images' => 'array',
-            'technical_specs' => 'array',
-            'is_published' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'price' => 'integer',
+        'stock' => 'integer',
+        'images' => 'array',
+        'technical_specs' => 'array',
+        'is_published' => 'boolean',
+    ];
 
     public function category(): BelongsTo
     {
