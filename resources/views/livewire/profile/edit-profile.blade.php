@@ -25,9 +25,7 @@
             <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
                 <span class="text-purple-500">👤</span> Informations personnelles
             </h2>
-
             <form wire:submit="updateProfile" class="space-y-5">
-
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                     <input
@@ -40,7 +38,6 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
                     <input
@@ -53,7 +50,6 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <button
                     type="submit"
                     class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition disabled:opacity-50"
@@ -65,7 +61,6 @@
                         Mettre à jour le profil
                     @endif
                 </button>
-
             </form>
         </div>
 
@@ -74,9 +69,7 @@
             <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
                 <span class="text-indigo-500">🔒</span> Changer le mot de passe
             </h2>
-
             <form wire:submit="updatePassword" class="space-y-5">
-
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe actuel</label>
                     <input
@@ -89,7 +82,6 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
                     <input
@@ -102,7 +94,6 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Confirmer le mot de passe</label>
                     <input
@@ -112,14 +103,12 @@
                         placeholder="••••••••"
                     />
                 </div>
-
                 <button
                     type="submit"
                     class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition"
                 >
                     Changer le mot de passe
                 </button>
-
             </form>
         </div>
 
