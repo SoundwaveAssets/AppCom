@@ -28,7 +28,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'shipping_address' => 'array',
     ];
 
     public function orders(): HasMany

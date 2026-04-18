@@ -19,7 +19,7 @@ return new class extends Migration
         $table->string('password');
         $table->enum('role', ['admin', 'user'])->default('user');
         $table->string('payment_customer_id')->nullable();
-        $table->json('shipping_address')->nullable();
+        $table->text('shipping_address')->nullable();
         $table->rememberToken();
         $table->timestamps();
     });

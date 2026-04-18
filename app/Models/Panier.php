@@ -6,28 +6,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OrderItem extends Model
+class Panier extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
-        'order_id',
-        'product_id',
+        'user_name',
         'product_name',
-        'unit_price',
+        'product_brand',
+        'product_stock',
+        'product_price',
         'quantity',
+        'payment_mode',
+        'card_number',
+        'user_id',
+        'product_id',
+        'client_type',
     ];
 
     protected $casts = [
-        'unit_price' => 'integer',
+        'product_price' => 'decimal:2',
+        'product_stock' => 'integer',
         'quantity' => 'integer',
     ];
 
-    public function order(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(User::class);
     }
 
     public function product(): BelongsTo

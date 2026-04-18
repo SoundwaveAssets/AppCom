@@ -11,6 +11,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'category_id',
         'brand_id',
         'name',
@@ -20,14 +21,17 @@ class Product extends Model
         'stock',
         'images',
         'technical_specs',
+        'weight',
+        'color',
+        'size',
+        'material',
+        'warranty',
         'is_published',
     ];
 
     protected $casts = [
-        'price' => 'integer',
+        'price' => 'decimal:2',
         'stock' => 'integer',
-        'images' => 'array',
-        'technical_specs' => 'array',
         'is_published' => 'boolean',
     ];
 
@@ -39,5 +43,10 @@ class Product extends Model
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
