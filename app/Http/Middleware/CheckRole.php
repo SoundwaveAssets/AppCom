@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, string $role)
+    public function handle(Request $request, Closure $next, string ...$roles)
     {
-        if (!auth()->check()) {
-            return redirect()->route('login');
+        $user = $request->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Authentification requise.'], 401);
         }
 
-        if (auth()->user()->role !== $role) {
-            abort(403, 'Accès non autorisé');
+        if (! in_array($user->role, $roles, true)) {
+            return response()->json(['message' => 'Acces non autorise.'], 403);
         }
 
         return $next($request);
