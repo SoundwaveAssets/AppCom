@@ -3,12 +3,36 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CatalogController extends Controller
 {
+    public function categories(): JsonResponse
+    {
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->with(['children' => fn ($q) => $q->where('is_active', true)])
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json(['data' => $categories]);
+    }
+
+    public function brands(): JsonResponse
+    {
+        $brands = Brand::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        return response()->json(['data' => $brands]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $query = Product::query()

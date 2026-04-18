@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth.firebase.optional')->group(function () {
+    Route::get('/catalog/categories', [CatalogController::class, 'categories']);
+    Route::get('/catalog/brands', [CatalogController::class, 'brands']);
     Route::get('/catalog/products', [CatalogController::class, 'index']);
     Route::get('/catalog/products/{product}', [CatalogController::class, 'show']);
 
@@ -37,6 +39,7 @@ Route::middleware('auth.firebase')->group(function () {
 
         Route::apiResource('products', AdminProductController::class);
         Route::patch('products/{product}/stock', [AdminProductController::class, 'updateStock']);
+        Route::post('products/upload-image', [AdminProductController::class, 'uploadImage']);
 
         Route::get('orders', [AdminOrderController::class, 'index']);
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus']);
