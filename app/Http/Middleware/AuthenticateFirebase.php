@@ -11,7 +11,11 @@ class AuthenticateFirebase
 
     public function handle(Request $request, Closure $next)
     {
-        $result = $this->resolver->handle($request, fn ($req) => $next($req));
+        if (! $request->bearerToken()) {
+            return response()->json(['message' => 'Authentification Firebase requise.'], 401);
+        }
+
+        $result = $this->resolver->handle($request, fn () => true);
 
         if ($result instanceof \Illuminate\Http\JsonResponse) {
             return $result;
@@ -21,6 +25,6 @@ class AuthenticateFirebase
             return response()->json(['message' => 'Authentification Firebase requise.'], 401);
         }
 
-        return $result;
+        return $next($request);
     }
 }
