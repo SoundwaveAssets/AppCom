@@ -1,0 +1,230 @@
+<!-- ========================================
+   PAGE PANIER MODERNE ET ÉLÉGANTE
+   ======================================== -->
+<div class="modern-cart-container">
+  <!-- Header du panier -->
+  <div class="cart-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-icon">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">Mon Panier</h1>
+          <p class="page-subtitle" *ngIf="!isEmpty()">
+            {{ itemCount }} article{{ itemCount > 1 ? 's' : '' }} dans votre panier
+          </p>
+        </div>
+      </div>
+      
+      <div class="header-actions" *ngIf="!isEmpty()">
+        <button mat-stroke-button class="continue-shopping-btn" routerLink="/catalog">
+          <mat-icon>arrow_back</mat-icon>
+          Continuer mes achats
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="cart-main-content">
+    <!-- Panier vide -->
+    <div *ngIf="isEmpty()" class="empty-cart-section">
+      <div class="empty-cart-content">
+        <div class="empty-cart-visual">
+          <mat-icon class="empty-icon">shopping_cart_outlined</mat-icon>
+          <div class="empty-dots">
+            <div class="dot dot-1"></div>
+            <div class="dot dot-2"></div>
+            <div class="dot dot-3"></div>
+          </div>
+        </div>
+        
+        <div class="empty-cart-text">
+          <h2 class="empty-title">Votre panier est vide</h2>
+          <p class="empty-description">
+            Découvrez notre sélection de produits high-tech et ajoutez vos articles préférés
+          </p>
+          
+          <div class="empty-actions">
+            <button mat-flat-button color="primary" class="browse-products-btn" routerLink="/catalog">
+              <mat-icon>store</mat-icon>
+              Explorer le catalogue
+            </button>
+            
+            <button mat-stroke-button class="discover-deals-btn" routerLink="/deals">
+              <mat-icon>local_offer</mat-icon>
+              Voir les promotions
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panier avec articles -->
+    <div *ngIf="!isEmpty()" class="cart-with-items">
+      <div class="cart-layout">
+        <!-- Section articles -->
+        <div class="cart-items-section">
+          <div class="section-header">
+            <h3 class="section-title">Articles du panier</h3>
+            <button mat-icon-button class="clear-cart-btn" (click)="onClearCart()">
+              <mat-icon>delete_sweep</mat-icon>
+            </button>
+          </div>
+          
+          <div class="cart-items-list">
+            <app-cart-item
+              *ngFor="let item of (cart$ | async)?.items || []"
+              [item]="item"
+              (quantityChange)="onQuantityChange($event)"
+              (remove)="onRemoveItem($event)"
+              class="cart-item-modern">
+            </app-cart-item>
+          </div>
+          
+          <!-- Suggestions de produits -->
+          <div class="suggestions-section">
+            <h4 class="suggestions-title">Vous pourriez aussi aimer</h4>
+            <div class="suggestions-grid">
+              <!-- Suggestion 1 -->
+              <div class="suggestion-card">
+                <div class="suggestion-image">
+                  <img src="https://via.placeholder.com/100x100/1976d2/ffffff?text=Product" alt="Suggestion"/>
+                </div>
+                <div class="suggestion-info">
+                  <h5>Protection Écran Premium</h5>
+                  <p class="suggestion-price">19,99 °C</p>
+                </div>
+                <button mat-icon-button class="add-suggestion-btn">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              
+              <!-- Suggestion 2 -->
+              <div class="suggestion-card">
+                <div class="suggestion-image">
+                  <img src="https://via.placeholder.com/100x100/4caf50/ffffff?text=Product" alt="Suggestion"/>
+                </div>
+                <div class="suggestion-info">
+                  <h5>Souris Gaming RGB</h5>
+                  <p class="suggestion-price">39,99 °C</p>
+                </div>
+                <button mat-icon-button class="add-suggestion-btn">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              
+              <!-- Suggestion 3 -->
+              <div class="suggestion-card">
+                <div class="suggestion-image">
+                  <img src="https://via.placeholder.com/100x100/ff9800/ffffff?text=Product" alt="Suggestion"/>
+                </div>
+                <div class="suggestion-info">
+                  <h5>Clavier Mécanique</h5>
+                  <p class="suggestion-price">79,99 °C</p>
+                </div>
+                <button mat-icon-button class="add-suggestion-btn">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section résumé et paiement -->
+        <div class="cart-summary-section">
+          <div class="summary-card">
+            <div class="summary-header">
+              <h3 class="summary-title">Résumé de la commande</h3>
+              <mat-icon class="summary-icon">receipt_long</mat-icon>
+            </div>
+            
+            <div class="summary-content">
+              <!-- Détails des prix -->
+              <div class="price-details">
+                <div class="price-row">
+                  <span class="price-label">Sous-total</span>
+                  <span class="price-value">{{ subtotal | currency:'EUR' }}</span>
+                </div>
+                
+                <div class="price-row">
+                  <span class="price-label">Livraison</span>
+                  <span class="price-value delivery-free">GRATITE</span>
+                </div>
+                
+                <div class="price-row promo-row" *ngIf="hasPromo">
+                  <span class="price-label">Remise (-15%)</span>
+                  <span class="price-value promo-value">-{{ promoAmount | currency:'EUR' }}</span>
+                </div>
+                
+                <mat-divider class="summary-divider"></mat-divider>
+                
+                <div class="price-row total-row">
+                  <span class="price-label">Total</span>
+                  <span class="price-value total-value">{{ total | currency:'EUR' }}</span>
+                </div>
+              </div>
+              
+              <!-- Code promo -->
+              <div class="promo-code-section">
+                <mat-form-field appearance="outline" class="promo-field">
+                  <mat-icon matPrefix>local_offer</mat-icon>
+                  <input matInput placeholder="Code promo"/>
+                  <button matSuffix mat-icon-button class="apply-promo-btn">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+              
+              <!-- Avantages -->
+              <div class="benefits-list">
+                <div class="benefit-item">
+                  <mat-icon class="benefit-icon">verified</mat-icon>
+                  <span>Garantie 2 ans incluse</span>
+                </div>
+                <div class="benefit-item">
+                  <mat-icon class="benefit-icon">local_shipping</mat-icon>
+                  <span>Livraison 24-48h offerte</span>
+                </div>
+                <div class="benefit-item">
+                  <mat-icon class="benefit-icon">security</mat-icon>
+                  <span>Paiement 100% sécurisé</span>
+                </div>
+              </div>
+              
+              <!-- Actions de paiement -->
+              <div class="payment-actions">
+                <button mat-flat-button color="primary" class="checkout-btn" routerLink="/checkout">
+                  <mat-icon>payment</mat-icon>
+                  Passer la commande
+                </button>
+                
+                <div class="payment-methods">
+                  <span class="payment-label">Moyens de paiement acceptés</span>
+                  <div class="payment-icons">
+                    <mat-icon class="payment-icon">credit_card</mat-icon>
+                    <mat-icon class="payment-icon">account_balance</mat-icon>
+                    <mat-icon class="payment-icon">smartphone</mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Service client -->
+          <div class="support-card">
+            <div class="support-content">
+              <mat-icon class="support-icon">support_agent</mat-icon>
+              <div class="support-text">
+                <h4>Besoin d'aide ?</h4>
+                <p>Notre service client est disponible 7j/7</p>
+                <a href="#" class="support-link">Contacter le support</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="product-list-container">
+  <!-- Filtres -->
+  <aside class="filters-sidebar">
+    <mat-card class="filters-card">
+      <mat-card-header>
+        <mat-card-title>Filtres</mat-card-title>
+        <button mat-icon-button (click)="resetFilters()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <!-- Recherche -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Rechercher</mat-label>
+          <input matInput (input)="onSearchChange($event)" placeholder="Nom ou description du produit">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Catégorie -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Catégorie</mat-label>
+          <mat-select (selectionChange)="onCategoryChange($event.value)">
+            <mat-option value="">Toutes les catégories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category.id">
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Marque -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Marque</mat-label>
+          <mat-select (selectionChange)="onBrandChange($event.value)">
+            <mat-option value="">Toutes les marques</mat-option>
+            <mat-option *ngFor="let brand of brands" [value]="brand.id">
+              {{ brand.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Fourchette de prix -->
+        <div class="price-range">
+          <h4>Fourchette de prix</h4>
+          <div class="price-inputs">
+            <mat-form-field appearance="outline">
+              <mat-label>Min</mat-label>
+              <input matInput type="number" placeholder="Min" (input)="onPriceRangeChange($any($event.target).value, priceMax?.value || '')" #priceMin>
+              <span matPrefix>€</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Max</mat-label>
+              <input matInput type="number" (input)="onPriceRangeChange(priceMin?.value || '', $any($event.target).value)" #priceMax>
+              <span matPrefix>€</span>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- En stock uniquement -->
+        <div class="stock-filter">
+          <mat-slide-toggle (change)="onInStockChange($event.checked)">
+            En stock uniquement
+          </mat-slide-toggle>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </aside>
+
+  <!-- Produits -->
+  <main class="products-main">
+    <div class="products-header">
+      <h1>Catalogue des produits</h1>
+      <p class="results-count">
+        {{ pagination.total }} produit{{ pagination.total > 1 ? 's' : '' }} trouvé{{ pagination.total > 1 ? 's' : '' }}
+      </p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Chargement des produits...</p>
+    </div>
+
+    <!-- Grille de produits -->
+    <div *ngIf="!isLoading" class="products-grid">
+      <app-product-card
+        *ngFor="let product of products"
+        [product]="product"
+        (addToCart)="onAddToCart($event)">
+      </app-product-card>
+    </div>
+
+    <!-- Message si aucun produit -->
+    <div *ngIf="!isLoading && products.length === 0" class="no-products">
+      <mat-icon>search_off</mat-icon>
+      <h3>Aucun produit trouvé</h3>
+      <p>Essayez de modifier vos filtres ou votre recherche</p>
+    </div>
+
+    <!-- Bouton charger plus -->
+    <div *ngIf="!isLoading && products.length > 0 && pagination.current_page < pagination.last_page" class="load-more-container">
+      <button 
+        mat-raised-button 
+        color="primary"
+        [disabled]="isLoadingMore"
+        (click)="loadMoreProducts()"
+        class="load-more-btn">
+        <mat-icon *ngIf="!isLoadingMore">add_circle</mat-icon>
+        <mat-spinner *ngIf="isLoadingMore" diameter="20"></mat-spinner>
+        {{ isLoadingMore ? 'Chargement...' : 'Charger plus de produits' }}
+      </button>
+    </div>
+
+    <!-- Pagination alternative -->
+    <mat-paginator
+      *ngIf="!isLoading && products.length > 0"
+      [length]="pagination.total"
+      [pageSize]="pagination.per_page"
+      [pageSizeOptions]="[12, 20, 36, 48]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+      class="paginator">
+    </mat-paginator>
+  </main>
+</div>

@@ -23,6 +23,8 @@ class Product extends Model
         'images',
         'technical_specs',
         'is_active',
+        'is_new',
+        'is_featured',
     ];
 
     protected $casts = [
@@ -33,6 +35,8 @@ class Product extends Model
         'images' => 'array',
         'technical_specs' => 'array',
         'is_active' => 'boolean',
+        'is_new' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     public function category(): BelongsTo

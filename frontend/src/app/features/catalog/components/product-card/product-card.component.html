@@ -1,0 +1,107 @@
+<!-- ========================================
+   PRODUCT CARD ULTRA PREMIUM
+   ======================================== -->
+<div class="premium-product-card" [class.out-of-stock]="isOutOfStock">
+  <!-- Badges -->
+  <div class="card-badges">
+    <div *ngIf="hasPromo" class="promo-badge">
+      <span>-{{ calculatePromoPercentage() }}%</span>
+    </div>
+    <div *ngIf="isOutOfStock" class="stock-badge">
+      <span>Rupture</span>
+    </div>
+    <div class="new-badge" *ngIf="product.is_new">
+      <span>Nouveau</span>
+    </div>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions">
+    <button mat-icon-button class="quick-action-btn favorite-btn">
+      <mat-icon>favorite_border</mat-icon>
+    </button>
+    <button mat-icon-button class="quick-action-btn compare-btn">
+      <mat-icon>compare_arrows</mat-icon>
+    </button>
+  </div>
+
+  <!-- Image du produit -->
+  <div class="product-image-section">
+    <div class="image-container">
+      <img 
+        [src]="mainImage" 
+        [alt]="product.name" 
+        class="product-image"
+        (error)="onImageError($event)"
+        loading="lazy"
+      />
+      <div class="image-overlay">
+        <button mat-icon-button class="quick-view-btn">
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu de la carte -->
+  <div class="product-content">
+    <!-- Marque et rating -->
+    <div class="brand-section">
+      <span class="brand-name">{{ product.brand.name }}</span>
+      <div class="rating-display">
+        <div class="stars">
+          <mat-icon class="star-filled">star</mat-icon>
+          <mat-icon class="star-filled">star</mat-icon>
+          <mat-icon class="star-filled">star</mat-icon>
+          <mat-icon class="star-filled">star</mat-icon>
+          <mat-icon class="star-half">star_half</mat-icon>
+        </div>
+        <span class="rating-count">(127)</span>
+      </div>
+    </div>
+
+    <!-- Nom du produit -->
+    <h3 class="product-name">{{ product.name }}</h3>
+
+    <!-- Description courte -->
+    <p class="product-description">
+      {{ product.description | slice:0:80 }}{{ product.description.length > 80 ? '...' : '' }}
+    </p>
+
+    <!-- Prix et stock -->
+    <div class="price-stock-section">
+      <div class="price-container">
+        <span class="current-price" [class.has-promo]="hasPromo">
+          {{ (hasPromo ? product.promo_price : product.price) | currency:'EUR' }}
+        </span>
+        <span *ngIf="hasPromo" class="original-price">
+          {{ product.price | currency:'EUR' }}
+        </span>
+      </div>
+      
+      <div class="stock-status" [class.in-stock]="!isOutOfStock" [class.out-stock]="isOutOfStock">
+        <mat-icon>{{ isOutOfStock ? 'remove_circle_outline' : 'check_circle_outline' }}</mat-icon>
+        <span>{{ isOutOfStock ? 'Indisponible' : `${product.stock} en stock` }}</span>
+      </div>
+    </div>
+
+    <!-- Tags de caractéristiques -->
+    <div class="product-tags">
+      <span class="tag">Express</span>
+      <span class="tag">Garantie 2 ans</span>
+      <span class="tag">Livraison offerte</span>
+    </div>
+
+    <!-- Bouton d'action -->
+    <div class="action-section" *ngIf="showAddToCart">
+      <button 
+        mat-flat-button 
+        class="add-to-cart-btn"
+        [disabled]="isOutOfStock"
+        (click)="onAddToCart($event)">
+        <mat-icon>add_shopping_cart</mat-icon>
+        {{ isOutOfStock ? 'Indisponible' : 'Ajouter au panier' }}
+      </button>
+    </div>
+  </div>
+</div>

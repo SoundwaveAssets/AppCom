@@ -1,0 +1,330 @@
+/* ========================================
+   ADMIN DASHBOARD STYLES
+   ======================================== */
+.admin-dashboard {
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: var(--space-8);
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .dashboard-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+/* ========================================
+   STATS GRID
+   ======================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.stat-card {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  mat-card-content {
+    padding: var(--space-6);
+  }
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  
+  &.revenue {
+    background: linear-gradient(135deg, var(--success), #16a34a);
+    color: white;
+  }
+  
+  &.orders {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+  }
+  
+  &.products {
+    background: linear-gradient(135deg, var(--warning), #d97706);
+    color: white;
+  }
+  
+  &.users {
+    background: linear-gradient(135deg, var(--info), #2563eb);
+    color: white;
+  }
+}
+
+.stat-info {
+  flex: 1;
+  
+  h3 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-1) 0;
+  }
+  
+  p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-2) 0;
+  }
+  
+  .stat-change {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    
+    &.positive {
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--success);
+    }
+    
+    &.negative {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+    }
+    
+    &.neutral {
+      background: rgba(107, 114, 128, 0.1);
+      color: var(--text-secondary);
+    }
+  }
+}
+
+/* ========================================
+   QUICK ACTIONS
+   ======================================== */
+.quick-actions {
+  margin-bottom: var(--space-8);
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+  }
+}
+
+.actions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  
+  button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    
+    mat-icon {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+/* ========================================
+   RECENT ORDERS
+   ======================================== */
+.recent-orders {
+  margin-bottom: var(--space-8);
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+  }
+  
+  mat-card {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+  }
+}
+
+.orders-table {
+  width: 100%;
+  
+  mat-header-cell {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  mat-cell {
+    color: var(--text-secondary);
+  }
+  
+  mat-chip {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+}
+
+/* ========================================
+   TOP PRODUCTS
+   ======================================== */
+.top-products {
+  margin-bottom: var(--space-8);
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+  }
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+
+.product-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+  }
+}
+
+.product-info {
+  flex: 1;
+  
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-1) 0;
+  }
+  
+  .product-sales {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-1) 0;
+  }
+  
+  .product-revenue {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+  }
+}
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  text-align: center;
+  
+  mat-spinner {
+    margin-bottom: var(--space-4);
+  }
+  
+  p {
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: var(--space-4);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .actions-grid {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-content {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-3);
+  }
+  
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
+  }
+  
+  .stat-info h3 {
+    font-size: 1.5rem;
+  }
+}

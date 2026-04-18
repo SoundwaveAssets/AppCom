@@ -1,0 +1,162 @@
+<div class="checkout-container">
+  <mat-card class="checkout-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>payment</mat-icon>
+        Finaliser la commande
+      </mat-card-title>
+      <mat-card-subtitle>Étape {{ stepIndex + 1 }} sur 3</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-stepper [linear]="true" #stepper>
+        <!-- Étape 1: Récapitulatif du panier -->
+        <mat-step [stepControl]="cartStep">
+          <ng-template matStepLabel>Récapitulatif</ng-template>
+          
+          <div class="cart-summary">
+            <h3>Votre commande ({{ itemCount }} article{{ itemCount > 1 ? 's' : '' }})</h3>
+            
+            <div class="cart-items">
+              <div *ngFor="let item of (cart$ | async)?.items" class="summary-item">
+                <div class="item-info">
+                  <span class="item-name">{{ item.product_name }}</span>
+                  <span class="item-quantity">x{{ item.quantity }}</span>
+                </div>
+                <span class="item-total">{{ (item.unit_price * item.quantity) | currency:'EUR' }}</span>
+              </div>
+            </div>
+
+            <div class="summary-total">
+              <div class="total-row">
+                <span>Total:</span>
+                <span class="total-amount">{{ total | currency:'EUR' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperNext>
+              Continuer
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
+
+        <!-- Étape 2: Adresse de livraison -->
+        <mat-step [stepControl]="addressStep">
+          <ng-template matStepLabel>Livraison</ng-template>
+          
+          <form [formGroup]="addressForm" class="address-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Adresse</mat-label>
+                <input matInput 
+                       [(ngModel)]="shippingAddress.address"
+                       (ngModelChange)="onAddressChange()"
+                       placeholder="123 rue de la République">
+                <mat-icon matSuffix>location_on</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Ville</mat-label>
+                <input matInput 
+                       [(ngModel)]="shippingAddress.city"
+                       (ngModelChange)="onAddressChange()"
+                       placeholder="Paris">
+                <mat-icon matSuffix>location_city</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Téléphone</mat-label>
+                <input matInput 
+                       [(ngModel)]="shippingAddress.phone"
+                       (ngModelChange)="onAddressChange()"
+                       placeholder="06 12 34 56 78">
+                <mat-icon matSuffix>phone</mat-icon>
+              </mat-form-field>
+            </div>
+          </form>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Retour
+            </button>
+            <button mat-raised-button color="primary" matStepperNext>
+              Continuer
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
+
+        <!-- Étape 3: Paiement -->
+        <mat-step [stepControl]="paymentStep">
+          <ng-template matStepLabel>Paiement</ng-template>
+          
+          <div class="payment-section">
+            <h3>Moyen de paiement</h3>
+            
+            <div class="payment-methods">
+              <mat-card class="payment-method selected">
+                <mat-card-content>
+                  <div class="method-header">
+                    <mat-icon>credit_card</mat-icon>
+                    <span>Carte bancaire</span>
+                  </div>
+                  <p>Paiement sécurisé via Stripe</p>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <div class="order-summary">
+              <h4>Récapitulatif de la commande</h4>
+              <div class="summary-details">
+                <div class="detail-row">
+                  <span>Articles ({{ itemCount }}):</span>
+                  <span>{{ total | currency:'EUR' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span>Livraison:</span>
+                  <span>Gratuite</span>
+                </div>
+                <div class="detail-row total">
+                  <span>Total:</span>
+                  <span>{{ total | currency:'EUR' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="payment-actions">
+              <button mat-button matStepperPrevious>
+                <mat-icon>arrow_back</mat-icon>
+                Retour
+              </button>
+              
+              <button 
+                mat-raised-button 
+                color="primary"
+                [disabled]="isLoading"
+                (click)="createPaymentIntent()">
+                <mat-icon *ngIf="!isLoading">payment</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                {{ isLoading ? 'Traitement en cours...' : 'Payer ' + (total | currency:'EUR') }}
+              </button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </mat-card-content>
+
+    <mat-card-actions class="checkout-actions">
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Retour au panier
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -1,0 +1,182 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>Tableau de bord administrateur</h1>
+    <p class="dashboard-subtitle">Bienvenue, {{ userDisplayName }}</p>
+  </div>
+
+  <!-- Statistiques principales -->
+  <div class="stats-grid" *ngIf="!isLoading(); else loadingTemplate">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon revenue">
+            <mat-icon>monetization_on</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ stats()?.totalRevenue | currency:'EUR' }}</h3>
+            <p>Revenu total</p>
+            <span class="stat-change positive">{{ formattedStats?.growthRate?.revenue || '0%' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon orders">
+            <mat-icon>shopping_cart</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ stats()?.totalOrders }}</h3>
+            <p>Commandes totales</p>
+            <span class="stat-change positive">{{ formattedStats?.growthRate?.orders || '0%' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon products">
+            <mat-icon>inventory_2</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ stats()?.totalProducts }}</h3>
+            <p>Produits</p>
+            <span class="stat-change neutral">{{ formattedStats?.growthRate?.products || '0%' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon users">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3>{{ stats()?.totalUsers }}</h3>
+            <p>Utilisateurs</p>
+            <span class="stat-change positive">{{ formattedStats?.growthRate?.users || '0%' }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions">
+    <h2>Actions rapides</h2>
+    <div class="actions-grid">
+      <button mat-raised-button color="primary" (click)="navigateToProducts()">
+        <mat-icon>add</mat-icon>
+        Ajouter un produit
+      </button>
+      <button mat-raised-button color="accent" (click)="navigateToOrders()">
+        <mat-icon>list</mat-icon>
+        Voir les commandes
+      </button>
+      <button mat-raised-button color="warn" (click)="navigateToUsers()" *ngIf="canManageUsers">
+        <mat-icon>manage_accounts</mat-icon>
+        Gérer les utilisateurs
+      </button>
+      <button mat-raised-button (click)="navigateToCategories()">
+        <mat-icon>category</mat-icon>
+        Catégories
+      </button>
+    </div>
+  </div>
+
+  <!-- Commandes récentes -->
+  <div class="recent-orders">
+    <h2>Commandes récentes</h2>
+    <mat-card>
+      <mat-card-content>
+        <table mat-table [dataSource]="recentOrders()" class="orders-table">
+          <!-- Numéro de commande -->
+          <ng-container matColumnDef="order_number">
+            <th mat-header-cell *matHeaderCellDef>Commande</th>
+            <td mat-cell *matCellDef="let order">
+              <strong>#{{ order.order_number }}</strong>
+            </td>
+          </ng-container>
+
+          <!-- Client -->
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Client</th>
+            <td mat-cell *matCellDef="let order">{{ order.customer_name }}</td>
+          </ng-container>
+
+          <!-- Total -->
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef>Total</th>
+            <td mat-cell *matCellDef="let order">
+              {{ order.total | currency:'EUR' }}
+            </td>
+          </ng-container>
+
+          <!-- Statut -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <td mat-cell *matCellDef="let order">
+              <mat-chip [color]="getStatusColor(order.status)" selected>
+                {{ order.status }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Date -->
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let order">
+              {{ order.created_at | date:'dd/MM/yyyy' }}
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let order">
+              <button mat-icon-button (click)="viewOrderDetails(order.id)" matTooltip="Voir les détails">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Produits populaires -->
+  <div class="top-products">
+    <h2>Produits populaires</h2>
+    <div class="products-grid">
+      <mat-card *ngFor="let product of topProducts()" class="product-card">
+        <mat-card-content>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="product-sales">{{ product.total_sales }} ventes</p>
+            <p class="product-revenue">{{ product.revenue | currency:'EUR' }}</p>
+          </div>
+          <button mat-icon-button (click)="navigateToProducts()" matTooltip="Voir le produit">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<!-- Template de chargement -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des données...</p>
+  </div>
+</ng-template>

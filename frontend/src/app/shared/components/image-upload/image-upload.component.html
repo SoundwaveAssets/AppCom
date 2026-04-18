@@ -1,0 +1,96 @@
+<div class="image-upload-container">
+  <div 
+    class="upload-area"
+    [class.drag-over]="isDragOver()"
+    [class.disabled]="!canAddMore() || isUploadInProgress()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)">
+    
+    <input
+      type="file"
+      #fileInput
+      class="file-input"
+      [accept]="acceptTypes()"
+      [multiple]="maxImages() > 1"
+      [disabled]="!canAddMore() || isUploadInProgress()"
+      (change)="onFileSelect($event)">
+    
+    <div class="upload-content" (click)="canAddMore() && !isUploadInProgress() && fileInput.click()">
+      <mat-icon class="upload-icon">cloud_upload</mat-icon>
+      
+      <div class="upload-text">
+        <h3>Télécharger des images</h3>
+        <p>
+          Glissez-déposez vos images ici ou 
+          <span class="browse-link" *ngIf="canAddMore() && !isUploadInProgress()">parcourez</span>
+        </p>
+        <small class="upload-info">
+          Formats: {{ acceptTypes() }} | Max: {{ maxSize() / (1024 * 1024) }}MB par image
+        </small>
+        <small class="images-count" *ngIf="currentImages().length > 0">
+          {{ currentImages().length }}/{{ maxImages() }} images
+        </small>
+      </div>
+      
+      <mat-spinner 
+        *ngIf="isUploadInProgress()"
+        diameter="40"
+        class="upload-spinner">
+      </mat-spinner>
+    </div>
+  </div>
+
+  <!-- Prévisualisation des images -->
+  <div class="images-preview" *ngIf="showPreview() && currentImages().length > 0">
+    <div class="preview-grid">
+      <div 
+        *ngFor="let image of currentImages(); let i = index"
+        class="preview-item"
+        [class.processing]="isUploadInProgress()">
+        
+        <img 
+          [src]="getImagePreview(image)"
+          [alt]="getImageName(image)"
+          class="preview-image"
+          (error)="onImageError($event)">
+        
+        <div class="preview-overlay">
+          <button 
+            mat-icon-button
+            class="remove-button"
+            (click)="removeImage(i)"
+            [disabled]="isUploadInProgress()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        
+        <div class="preview-info">
+          <span class="image-name">{{ getImageName(image) }}</span>
+          <span class="image-size">{{ getImageSize(image) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-actions" *ngIf="currentImages().length > 0">
+      <button 
+        mat-stroked-button
+        (click)="removeAllImages()"
+        [disabled]="isUploadInProgress()">
+        <mat-icon>clear_all</mat-icon>
+        Supprimer toutes les images
+      </button>
+      
+      <span class="total-info">
+        {{ currentImages().length }} image{{ currentImages().length > 1 ? 's' : '' }} téléchargée{{ currentImages().length > 1 ? 's' : '' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Message d'erreur si aucune image -->
+  <div class="empty-state" *ngIf="!showPreview() || currentImages().length === 0">
+    <mat-icon class="empty-icon">image</mat-icon>
+    <p>Aucune image téléchargée</p>
+    <small>Ajoutez des images pour voir leur aperçu</small>
+  </div>
+</div>

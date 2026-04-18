@@ -1,0 +1,38 @@
+<div class="cart-item">
+  <div class="item-image">
+    <img [src]="item.product?.images?.[0] || '/assets/placeholder-product.jpg'" [alt]="item.product_name">
+  </div>
+  
+  <div class="item-details">
+    <h3 class="item-name">{{ item.product_name }}</h3>
+    <p class="item-price">{{ item.unit_price | currency:'EUR' }}</p>
+  </div>
+
+  <div class="item-quantity">
+    <mat-form-field appearance="outline" class="quantity-field">
+      <mat-label>Quantité</mat-label>
+      <input matInput 
+             type="number" 
+             [value]="item.quantity" 
+             (input)="onQuantityChange($any($event.target).value)"
+             min="1"
+             max="99">
+      <button mat-icon-button matSuffix (click)="onQuantityChange(item.quantity - 1)">
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button mat-icon-button matSuffix (click)="onQuantityChange(item.quantity + 1)">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div class="item-total">
+    <span class="total-amount">{{ itemTotal | currency:'EUR' }}</span>
+  </div>
+
+  <div class="item-actions">
+    <button mat-icon-button color="warn" (click)="onRemove()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</div>

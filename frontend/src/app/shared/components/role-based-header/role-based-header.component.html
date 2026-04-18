@@ -1,0 +1,157 @@
+<header class="role-based-header" [class.admin-mode]="isAdmin()">
+  <!-- Barre supérieure avec informations sur le rôle -->
+  <div class="top-bar" *ngIf="isAuthenticated()">
+    <div class="container">
+      <div class="role-indicator">
+        <mat-icon [color]="userRoleColor()">account_circle</mat-icon>
+        <span class="role-text">{{ userRoleLabel() }}</span>
+      </div>
+      <div class="user-info">
+        <span class="welcome-text">Bienvenue, {{ userDisplayName() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de navigation principale -->
+  <mat-toolbar class="main-toolbar" color="primary">
+    <div class="container">
+      <!-- Logo et branding -->
+      <div class="brand-section">
+        <a routerLink="/" class="brand-link">
+          <mat-icon class="brand-icon">store</mat-icon>
+          <span class="brand-name">SoundWave</span>
+        </a>
+      </div>
+
+      <!-- Navigation selon le rôle -->
+      <nav class="nav-section" *ngIf="isAuthenticated()">
+        <div class="nav-items">
+          <a 
+            *ngFor="let item of navigationItems()" 
+            [routerLink]="item.route" 
+            routerLinkActive="active"
+            class="nav-item"
+            mat-button>
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Actions rapides -->
+      <div class="actions-section">
+        <!-- Actions pour invités -->
+        <div *ngIf="!isAuthenticated()" class="guest-actions">
+          <a routerLink="/catalog" mat-button class="catalog-btn">
+            <mat-icon>shopping_bag</mat-icon>
+            <span>Catalogue</span>
+          </a>
+          <a routerLink="/auth/signin" mat-raised-button color="primary">
+            Se connecter
+          </a>
+        </div>
+
+        <!-- Actions pour utilisateurs connectés -->
+        <div *ngIf="isAuthenticated()" class="user-actions">
+          <!-- Actions rapides selon le rôle -->
+          <div class="quick-actions">
+            <a 
+              *ngFor="let action of quickActions()" 
+              [routerLink]="action.route"
+              mat-icon-button 
+              [color]="action.color"
+              class="quick-action-btn">
+              <mat-icon>{{ action.icon }}</mat-icon>
+            </a>
+          </div>
+
+          <!-- Menu utilisateur -->
+          <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
+            <div class="user-avatar">
+              {{ userInitials() }}
+            </div>
+          </button>
+
+          <mat-menu #userMenu="matMenu" class="user-menu">
+            <button mat-menu-item class="user-header" disabled>
+              <div class="user-header-content">
+                <div class="user-avatar-large">{{ userInitials() }}</div>
+                <div class="user-details">
+                  <div class="user-name">{{ userDisplayName() }}</div>
+                  <div class="user-role">{{ userRoleLabel() }}</div>
+                </div>
+              </div>
+            </button>
+            <mat-divider></mat-divider>
+            
+            <!-- Menu selon le rôle -->
+            <ng-container *ngIf="isAdmin()">
+              <button mat-menu-item routerLink="/admin/dashboard">
+                <mat-icon>dashboard</mat-icon>
+                <span>Tableau de bord</span>
+              </button>
+              <button mat-menu-item routerLink="/admin/products">
+                <mat-icon>inventory_2</mat-icon>
+                <span>Gestion produits</span>
+              </button>
+              <button mat-menu-item routerLink="/admin/orders">
+                <mat-icon>shopping_cart</mat-icon>
+                <span>Gestion commandes</span>
+              </button>
+              <button mat-menu-item routerLink="/admin/users">
+                <mat-icon>people</mat-icon>
+                <span>Gestion utilisateurs</span>
+              </button>
+              <mat-divider></mat-divider>
+            </ng-container>
+
+            <ng-container *ngIf="!isAdmin()">
+              <button mat-menu-item routerLink="/profile">
+                <mat-icon>account_circle</mat-icon>
+                <span>Mon profil</span>
+              </button>
+              <button mat-menu-item routerLink="/orders">
+                <mat-icon>receipt_long</mat-icon>
+                <span>Mes commandes</span>
+              </button>
+              <button mat-menu-item routerLink="/favorites">
+                <mat-icon>favorite</mat-icon>
+                <span>Mes favoris</span>
+              </button>
+              <button mat-menu-item routerLink="/settings">
+                <mat-icon>settings</mat-icon>
+                <span>Paramètres</span>
+              </button>
+              <mat-divider></mat-divider>
+            </ng-container>
+
+            <!-- Actions communes -->
+            <button mat-menu-item (click)="navigateToSettings()">
+              <mat-icon>settings</mat-icon>
+              <span>Paramètres</span>
+            </button>
+            <button mat-menu-item (click)="signOut()">
+              <mat-icon>logout</mat-icon>
+              <span>Déconnexion</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <!-- Barre de navigation secondaire (admin) -->
+  <div class="secondary-nav" *ngIf="isAdmin()">
+    <div class="container">
+      <div class="admin-stats">
+        <div class="stat-item">
+          <mat-icon>trending_up</mat-icon>
+          <span>Statistiques</span>
+        </div>
+        <div class="stat-item">
+          <mat-icon matBadgeContent="3" matBadgeColor="warn">notifications</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
