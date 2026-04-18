@@ -1,74 +1,46 @@
 <?php
 
+use App\Http\Controllers\Api\AdminBrandController;
+use App\Http\Controllers\Api\AdminCategoryController;
+use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\AdminOrderController;
+use App\Http\Controllers\Api\AdminProductController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
-use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\CustomerOrderController;
 use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Dev 3 — Routes : Checkout, Commandes & Paiement
-|--------------------------------------------------------------------------
-|
-| À coller dans routes/api.php de votre projet Laravel.
-|
-| Dépendances :
-|   - Middleware 'auth.firebase'   → implémenté par le Dev 1
-|   - Package Stripe               → composer require stripe/stripe-php
-|
-| Variables d'environnement (.env) à ajouter :
-|   STRIPE_SECRET=sk_live_...
-|   STRIPE_WEBHOOK_SECRET=whsec_...
-|   STRIPE_CURRENCY=xaf
-|
-| Ajout dans config/services.php :
-|   'stripe' => [
-|       'secret'         => env('STRIPE_SECRET'),
-|       'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
-|       'currency'       => env('STRIPE_CURRENCY', 'xaf'),
-|   ],
-|
-| Exclure le webhook du CSRF dans app/Http/Middleware/VerifyCsrfToken.php :
-|   protected $except = ['api/webhooks/stripe'];
-|
-*/
+Route::middleware('auth.firebase.optional')->group(function () {
+    Route::get('/catalog/products', [CatalogController::class, 'index']);
+    Route::get('/catalog/products/{product}', [CatalogController::class, 'show']);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Webhook Stripe
-// ⚠  DOIT rester HORS de tout middleware (auth, throttle, etc.)
-//    Stripe envoie le corps brut — ne pas modifier le body
-// ─────────────────────────────────────────────────────────────────────────────
-Route::post('/webhooks/stripe', [WebhookController::class, 'handle'])
-    ->name('webhooks.stripe');
+    Route::post('/checkout/validate-cart', [CheckoutController::class, 'validateCart']);
+    Route::post('/checkout/payment-intent', [CheckoutController::class, 'createPaymentIntent']);
+});
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Checkout (invités ET utilisateurs connectés)
-// ─────────────────────────────────────────────────────────────────────────────
-Route::post('/checkout/validate-cart', [CheckoutController::class, 'validateCart'])
-    ->name('checkout.validate-cart');
+Route::post('/webhooks/stripe', [WebhookController::class, 'handle'])->name('webhooks.stripe');
 
-Route::post('/checkout', [CheckoutController::class, 'placeOrder'])
-    ->name('checkout.place-order');
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Commandes — Utilisateurs authentifiés uniquement
-// ─────────────────────────────────────────────────────────────────────────────
 Route::middleware('auth.firebase')->group(function () {
+    Route::get('/auth/me', [AuthController::class, 'me']);
 
-    // ── Client : consultation de ses propres commandes ───────────────────
-    Route::get('/orders', [OrderController::class, 'index'])
-        ->name('orders.index');
+    Route::get('/orders', [CustomerOrderController::class, 'index']);
+    Route::get('/orders/{order}', [CustomerOrderController::class, 'show']);
 
-    Route::get('/orders/{order}', [OrderController::class, 'show'])
-        ->name('orders.show');
+    Route::prefix('/admin')->middleware('role:admin')->group(function () {
+        Route::apiResource('categories', AdminCategoryController::class)->except(['destroy']);
+        Route::patch('categories/{category}/toggle', [AdminCategoryController::class, 'toggleActive']);
 
-    // ── Admin : gestion de toutes les commandes ───────────────────────────
-    // La vérification du rôle 'admin' est faite dans le controller / FormRequest
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/orders', [OrderController::class, 'adminIndex'])
-            ->name('orders.index');
+        Route::apiResource('brands', AdminBrandController::class)->except(['destroy']);
+        Route::patch('brands/{brand}/toggle', [AdminBrandController::class, 'toggleActive']);
 
-        Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])
-            ->name('orders.update-status');
+        Route::apiResource('products', AdminProductController::class);
+        Route::patch('products/{product}/stock', [AdminProductController::class, 'updateStock']);
+
+        Route::get('orders', [AdminOrderController::class, 'index']);
+        Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus']);
+
+        Route::get('dashboard/stats', [AdminDashboardController::class, 'stats']);
     });
 });

@@ -11,7 +11,12 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public const ROLE_SUPER_ADMIN = 'admin';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_CUSTOMER = 'user';
+
     protected $fillable = [
+        'firebase_uid',
         'name',
         'email',
         'role',
@@ -33,12 +38,12 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, [self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN], true);
     }
 
     public function isUser(): bool
     {
-        return $this->role === 'user';
+        return $this->role === self::ROLE_CUSTOMER;
     }
 
     public function orders(): HasMany

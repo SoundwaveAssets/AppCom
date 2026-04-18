@@ -17,18 +17,22 @@ class Product extends Model
         'slug',
         'description',
         'price',
+        'promo_price',
+        'weight',
         'stock',
         'images',
         'technical_specs',
-        'is_published',
+        'is_active',
     ];
 
     protected $casts = [
         'price' => 'integer',
+        'promo_price' => 'integer',
+        'weight' => 'float',
         'stock' => 'integer',
         'images' => 'array',
         'technical_specs' => 'array',
-        'is_published' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     public function category(): BelongsTo
