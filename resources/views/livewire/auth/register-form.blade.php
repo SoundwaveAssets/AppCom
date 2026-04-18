@@ -1,3 +1,0 @@
-<div>
-    Register Form
-</div>
