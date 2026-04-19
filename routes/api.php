@@ -1,9 +1,36 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
+
+// Routes d'authentification API
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth.firebase');
+Route::get('/auth/me', [AuthController::class, 'me'])->middleware('auth.firebase');
+
+// Routes publiques pour les produits, catégories et marques
+Route::get('/products', [ProductController::class, 'publicIndex']);
+Route::get('/categories', [CategoryController::class, 'publicIndex']);
+Route::get('/brands', [BrandController::class, 'publicIndex']);
+Route::get('/panier', [CheckoutController::class, 'getCart']);
+
+// Routes pour les produits utilisateur (authentifiés)
+Route::middleware('auth.firebase')->group(function () {
+    Route::apiResource('user/products', ProductController::class)->names([
+        'index' => 'user.products.index',
+        'store' => 'user.products.store',
+        'show' => 'user.products.show',
+        'update' => 'user.products.update',
+        'destroy' => 'user.products.destroy'
+    ]);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -65,10 +92,23 @@ Route::middleware('auth.firebase')->group(function () {
     // ── Admin : gestion de toutes les commandes ───────────────────────────
     // La vérification du rôle 'admin' est faite dans le controller / FormRequest
     Route::prefix('admin')->name('admin.')->group(function () {
+        // Routes pour les commandes
         Route::get('/orders', [OrderController::class, 'adminIndex'])
             ->name('orders.index');
 
         Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])
             ->name('orders.update-status');
+
+        // Routes pour les marques (CRUD complet)
+        Route::apiResource('brands', BrandController::class);
+
+        // Routes pour les catégories (CRUD complet)
+        Route::apiResource('categories', CategoryController::class);
+
+        // Routes pour les produits (CRUD complet)
+        Route::apiResource('products', ProductController::class);
+
+        // Route pour les produits de l'admin avec pagination
+        Route::get('/my-products', [ProductController::class, 'myProductsWithPagination']);
     });
 });
